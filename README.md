@@ -1,180 +1,145 @@
-# 🎡 Wheel Spinner
+# 🎡 Wheel Spinner - Next.js Edition
 
-A Matrix-themed React application that spins a wheel to randomly choose from a list of editable names, with MongoDB backend for persistent storage.
+A retro terminal-style wheel spinner built with Next.js, perfect for random selection and giveaways!
 
-## Features
+## 🚀 Features
 
-- 🎨 Matrix-inspired UI with green terminal aesthetics and glitch effects
-- 🎡 Interactive spinning wheel with realistic physics
-- ✏️ Editable list of names with password protection
-- 🔒 Password-protected editing (default password: `lgtm`)
-- 💾 MongoDB database for persistent storage
-- ⌨️ Keyboard shortcuts (Enter/Space to spin, Escape to close winner)
+- 🎨 Retro terminal/hacker aesthetic with glowing green effects
+- 🎯 Smooth spinning animation with random selection
+- 🔒 Password-protected name editing
+- 💾 Local storage for persistent data
 - 📱 Fully responsive design
-- 🎉 Animated winner announcement
-- 🔄 Real-time data synchronization with backend
+- ⌨️ Keyboard shortcuts (Enter/Space to spin, Escape to close winner)
+- 🎪 Vertical text along wheel segments
+- 🌐 Ready for Vercel deployment with API routes
 
-## Prerequisites
-
-- Node.js (v16 or higher)
-- MongoDB (local installation or MongoDB Atlas account)
-- npm or yarn
-
-## Installation
-
-### 1. Clone and Install Dependencies
+## 📦 Installation
 
 ```bash
-# Install frontend dependencies
+# Install dependencies
 npm install
 
-# Install backend dependencies
-cd server
-npm install
-cd ..
-```
-
-### 2. Set Up MongoDB
-
-**Option A: Local MongoDB**
-- Install MongoDB locally: https://www.mongodb.com/docs/manual/installation/
-- Make sure MongoDB is running on `mongodb://localhost:27017`
-
-**Option B: MongoDB Atlas (Cloud)**
-- Create a free account at https://www.mongodb.com/cloud/atlas
-- Create a cluster and get your connection string
-- Update the connection string in `server/.env.example`
-
-### 3. Configure Environment Variables
-
-**Backend Configuration:**
-```bash
-# Copy the example env file
-cp server/.env.example server/.env
-
-# Edit server/.env and update if needed:
-# PORT=3001
-# MONGODB_URI=mongodb://localhost:27017/wheel-spinner
-# Or use your MongoDB Atlas connection string
-```
-
-**Frontend Configuration:**
-Create a `.env.local` file in the root directory:
-```bash
-VITE_API_URL=http://localhost:3001/api
-```
-
-## Running the Application
-
-### Development Mode
-
-You need to run both the frontend and backend:
-
-**Terminal 1 - Backend Server:**
-```bash
-cd server
+# Run development server
 npm run dev
 ```
 
-**Terminal 2 - Frontend:**
-```bash
-npm run dev
+Open [http://localhost:3000](http://localhost:3000) to see the app.
+
+## 🔧 Configuration
+
+### Changing the Password
+
+Edit the password in `app/page.jsx`:
+
+```javascript
+const EDIT_PASSWORD = 'admin123' // Change this to your desired password
 ```
 
-The app will be available at:
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:3001`
+### Customizing Default Names
 
-### Production Build
+Modify the `DEFAULT_NAMES` array in `app/page.jsx`:
 
-```bash
-# Build frontend
-npm run build
-
-# Start backend in production
-cd server
-npm start
+```javascript
+const DEFAULT_NAMES = [
+  'Name1',
+  'Name2',
+  'Name3',
+  // Add your names here
+]
 ```
 
-## Usage
+## 🎮 Usage
 
-1. **Spinning the Wheel**: 
-   - Click the "SPIN!" button
-   - Or press Enter/Space key
+1. Click the **SPIN** button or press **Enter/Space** to spin the wheel
+2. Click **Edit Names** to modify the list (requires password)
+3. Add or remove names as needed
+4. Names are automatically saved to local storage
 
-2. **Editing Names**: 
-   - Click the "Edit Names" button
-   - Enter the password (default: `admin123`)
-   - Add new names or remove existing ones
-   - Click "Save Changes" to sync with database
+## 🌐 API Routes
 
-3. **Keyboard Shortcuts**:
-   - `Enter` or `Space`: Spin the wheel
-   - `Escape`: Close winner modal
+The app includes API routes ready for future server-side functionality:
 
-4. **Changing Password**: 
-   - Edit the `EDIT_PASSWORD` constant in `src/App.jsx`
+- `GET /api/health` - Health check endpoint
+- `GET /api/names` - Fetch names (ready for database integration)
+- `PUT /api/names` - Update names (ready for database integration)
 
-## Project Structure
+Currently the app uses localStorage, but you can easily add database logic to these routes.
+
+## 🚀 Deployment to Vercel
+
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com)
+3. Import your repository
+4. Vercel will automatically detect Next.js and deploy!
+
+### Environment Variables (Optional)
+
+If you add a database later, set your environment variables in Vercel:
+
+- `DATABASE_URL` - Your database connection string
+- `NEXT_PUBLIC_API_URL` - Your API URL (if different from default)
+
+## 📁 Project Structure
 
 ```
 wheel/
-├── src/                    # Frontend React app
-│   ├── components/
-│   │   ├── WheelSpinner.jsx
-│   │   ├── WheelSpinner.css
+├── app/
+│   ├── api/              # API routes
+│   │   ├── health/
+│   │   └── names/
+│   ├── components/       # React components
 │   │   ├── NameManager.jsx
-│   │   └── NameManager.css
-│   ├── App.jsx
-│   ├── App.css
-│   ├── main.jsx
-│   └── index.css
-├── server/                 # Backend Express server
-│   ├── models/
-│   │   └── WheelData.js   # MongoDB schema
-│   ├── server.js          # Express API
-│   ├── package.json
-│   └── .env.example
-├── package.json
-├── vite.config.js
-└── README.md
+│   │   ├── NameManager.css
+│   │   ├── WheelSpinner.jsx
+│   │   └── WheelSpinner.css
+│   ├── globals.css       # Global styles
+│   ├── layout.jsx        # Root layout
+│   ├── page.jsx          # Home page
+│   └── page.css          # Page styles
+├── public/               # Static assets
+├── next.config.js        # Next.js configuration
+├── package.json          # Dependencies
+└── vercel.json          # Vercel configuration
 ```
 
-## API Endpoints
+## 🎨 Customization
 
-- `GET /api/names` - Fetch all names
-- `PUT /api/names` - Update names list
-- `GET /api/health` - Server health check
+### Colors
 
-## Technologies Used
+The app uses a green terminal theme. To change colors, update the CSS files:
 
-### Frontend
-- React 18
-- Vite
-- CSS3 with Matrix-themed animations
-- Fetch API for backend communication
+- Primary color: `#00ff00` (bright green)
+- Background: `#000000` (black)
+- Accents: Various shades of green
 
-### Backend
-- Node.js
-- Express
-- MongoDB with Mongoose
-- CORS enabled
+### Wheel Segments
 
-## Troubleshooting
+Wheel colors are defined in `app/components/WheelSpinner.jsx`:
 
-### Connection Issues
-- Make sure MongoDB is running
-- Check that backend server is running on port 3001
-- Verify `.env.local` and `server/.env` are configured correctly
+```javascript
+const colors = [
+  '#001a00', '#003300', '#004d00', '#006600',
+  '#008000', '#009900', '#00b300', '#00cc00',
+  '#002600', '#003d00'
+]
+```
 
-### Port Conflicts
-- If port 3001 or 5173 is in use, update the port in respective config files
+## 🛠️ Tech Stack
 
-### Database Issues
-- Check MongoDB connection string in `server/.env`
-- Verify MongoDB service is running
-- Check server logs for connection errors
+- **Framework:** Next.js 14 (App Router)
+- **React:** 18.3.1
+- **Deployment:** Vercel
+- **Styling:** CSS Modules
+- **Fonts:** Google Fonts (Courier Prime, Share Tech Mono)
 
-## License
+## 📝 License
 
-MIT
+MIT License - Feel free to use this project however you'd like!
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+---
+
+Made with 💚 and terminal nostalgia
