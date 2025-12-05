@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import WheelSpinner from './components/WheelSpinner'
+import './components/WheelSpinner.css'
 import NameManager from './components/NameManager'
 import './page.css'
 
-const EDIT_PASSWORD = 'admin123' // You can change this password
 const STORAGE_KEY = 'wheelSpinner_names'
 
-// Default names list
+// Default names list (fallback if S3 fetch fails)
 const DEFAULT_NAMES = [
   'Vineet',
   'Maneesha',
@@ -49,26 +49,49 @@ const DEFAULT_NAMES = [
 const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export default function Home() {
-  // Load names from local storage on component mount
-  const [names, setNames] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedNames = localStorage.getItem(STORAGE_KEY)
-      if (storedNames) {
-        try {
-          return JSON.parse(storedNames)
-        } catch (err) {
-          console.error('Error parsing stored names:', err)
-          return DEFAULT_NAMES
-        }
-      }
-    }
-    return DEFAULT_NAMES
-  });
-  const [isEditing, setIsEditing] = useState(false);
+  const [names, setNames] = useState(DEFAULT_NAMES);
+  const [isLoading, setIsLoading] = useState(true);
   const [winner, setWinner] = useState(null);
   const [showWinner, setShowWinner] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
   let interval = null;
+
+  // Fetch names from S3 on mount
+  useEffect(() => {
+    const fetchNames = async () => {
+      try {
+        const response = await fetch('/api/names')
+        const data = await response.json()
+        
+        if (data.success && Array.isArray(data.names)) {
+          setNames(data.names)
+          // Also save to localStorage as cache
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data.names))
+        } else {
+          // Fall back to localStorage if API fails
+          const storedNames = localStorage.getItem(STORAGE_KEY)
+          if (storedNames) {
+            setNames(JSON.parse(storedNames))
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching names:', error)
+        // Fall back to localStorage
+        const storedNames = localStorage.getItem(STORAGE_KEY)
+        if (storedNames) {
+          try {
+            setNames(JSON.parse(storedNames))
+          } catch (err) {
+            console.error('Error parsing stored names:', err)
+          }
+        }
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchNames()
+  }, [])
 
   const handleCloseWinner = () => {
     setShowWinner(false);
@@ -90,18 +113,10 @@ export default function Home() {
     }
   }, [showWinner])
 
-  const handlePasswordSubmit = (password) => {
-    if (password === EDIT_PASSWORD) {
-      setIsEditing(true)
-      return true
-    }
-    return false
-  }
-
   const handleSaveNames = (newNames) => {
+    // Save to localStorage
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newNames))
     setNames(newNames)
-    setIsEditing(false)
   }
 
   const handleSpinComplete = (selectedName) => {
@@ -134,33 +149,34 @@ export default function Home() {
   };
 
 
+  if (isLoading) {
+    return (
+      <div className="app">
+        <div className="container">
+          <h1 className="title">{'>'} WHEEL_SPINNER.EXE</h1>
+          <div className="wheel-container">
+            <div className="wheel-placeholder">
+              <div className="loading-text">Loading...</div>
+            </div>
+            <button className="spin-button" disabled>
+              SPIN!
+            </button>
+            <p className="keyboard-hint">Press ENTER or SPACE to spin</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="app">
       <div className="container">
         <h1 className="title">{'>'} WHEEL_SPINNER.EXE</h1>
 
-        {!isEditing ? (
-          <>
-            <WheelSpinner 
-              names={names} 
-              onSpinComplete={handleSpinComplete}
-            />
-            
-            <button 
-              className="edit-button"
-              onClick={() => setIsEditing(true)}
-            >
-            Edit Names
-            </button>
-          </>
-        ) : (
-          <NameManager
-            initialNames={names}
-            onSave={handleSaveNames}
-            onCancel={() => setIsEditing(false)}
-            onPasswordSubmit={handlePasswordSubmit}
-          />
-        )}
+        <WheelSpinner 
+          names={names} 
+          onSpinComplete={handleSpinComplete}
+        />
       </div>
 
       {showWinner && (
@@ -181,4 +197,3 @@ export default function Home() {
     </div>
   )
 }
-

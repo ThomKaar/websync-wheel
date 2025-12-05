@@ -125,6 +125,50 @@
   padding: 40px;
 }
 
+.wheel-placeholder {
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 
+    0 0 0 10px #000,
+    0 0 0 12px #00ff00,
+    0 0 50px rgba(0, 255, 0, 0.3),
+    inset 0 0 30px rgba(0, 255, 0, 0.1);
+  background: 
+    radial-gradient(circle at center, rgba(0, 255, 0, 0.05) 0%, transparent 70%),
+    repeating-conic-gradient(from 0deg, rgba(0, 50, 0, 0.5) 0deg 10deg, rgba(0, 30, 0, 0.5) 10deg 20deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: placeholderPulse 2s ease-in-out infinite;
+}
+
+@keyframes placeholderPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 0 10px #000,
+      0 0 0 12px #00ff00,
+      0 0 30px rgba(0, 255, 0, 0.2),
+      inset 0 0 30px rgba(0, 255, 0, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 10px #000,
+      0 0 0 12px #00ff00,
+      0 0 50px rgba(0, 255, 0, 0.5),
+      inset 0 0 50px rgba(0, 255, 0, 0.2);
+  }
+}
+
+.loading-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.2rem;
+  color: #00ff00;
+  text-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+  animation: blink 1s infinite;
+}
+
 .keyboard-hint {
   text-align: center;
   color: rgba(0, 255, 0, 0.6);
@@ -141,6 +185,11 @@
 
 @media (max-width: 768px) {
   .wheel {
+    width: 300px;
+    height: 300px;
+  }
+
+  .wheel-placeholder {
     width: 300px;
     height: 300px;
   }

@@ -20,8 +20,8 @@ const WheelSpinner = ({ names, onSpinComplete }) => {
     setIsSpinning(true);
 
     // Random spins between 5 and 8 full rotations
-    const minSpins = 5
-    const maxSpins = 8
+    const minSpins = 10
+    const maxSpins = 16
     const spins = minSpins + Math.random() * (maxSpins - minSpins);
     const degrees = spins * 360;
 
@@ -35,8 +35,8 @@ const WheelSpinner = ({ names, onSpinComplete }) => {
     setTimeout(() => {
       const normalizedRotation = totalRotation % 360;
       const segmentAngle = 360 / names.length;
-      // Adjusted to account for pointer at top
-      const selectedIndex = Math.floor(((360 - normalizedRotation + segmentAngle / 2) % 360) / segmentAngle) % names.length;
+      // Find which segment the pointer (at top/0°) is pointing to
+      const selectedIndex = Math.floor(((360 - normalizedRotation) % 360) / segmentAngle) % names.length;
       
       setIsSpinning(false);
       onSpinComplete(names[selectedIndex]);

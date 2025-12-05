@@ -1,24 +1,45 @@
 import { NextResponse } from 'next/server'
 
-// Example API route for future server-side storage
-// Currently the app uses localStorage, but you can add server logic here
+// S3 URL for fetching names (configure via environment variable)
+const NAMES_URL = process.env.NAMES_URL
 
 export async function GET() {
-  // TODO: Add database logic here if needed
-  return NextResponse.json({ 
-    message: 'Names API endpoint ready for implementation',
-    note: 'Currently using localStorage on client side'
-  })
-}
+  if (!NAMES_URL) {
+    return NextResponse.json(
+      { success: false, error: 'NAMES_URL is not configured' },
+      { status: 500 }
+    )
+  }
 
-export async function PUT(request) {
-  // TODO: Add database logic here if needed
-  const body = await request.json()
-  
-  return NextResponse.json({ 
-    message: 'Names update endpoint ready for implementation',
-    received: body,
-    note: 'Currently using localStorage on client side'
-  })
-}
+  try {
+    const response = await fetch(NAMES_URL, {
+      // Cache for 5 minutes, revalidate in background
+      next: { revalidate: 300 }
+    })
 
+    if (!response.ok) {
+      throw new Error(`Failed to fetch names: ${response.status}`)
+    }
+
+    const { names } = await response.json() || {};
+
+
+
+    // Validate that we got an array
+    if (!Array.isArray(names)) {
+      throw new Error('Names data is not an array');
+    }
+
+    return NextResponse.json({
+      success: true,
+      names
+    })
+
+  } catch (error) {
+    console.error('Error fetching names from S3:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch names' },
+      { status: 500 }
+    );
+  }
+}

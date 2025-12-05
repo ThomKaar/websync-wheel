@@ -3,24 +3,9 @@
 import { useState } from 'react'
 import './NameManager.css'
 
-const NameManager = ({ initialNames, onSave, onCancel, onPasswordSubmit }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [password, setPassword] = useState('')
-  const [passwordError, setPasswordError] = useState(false)
+const NameManager = ({ initialNames, onSave, onCancel }) => {
   const [names, setNames] = useState([...initialNames])
   const [newName, setNewName] = useState('')
-
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault()
-    const isValid = onPasswordSubmit(password)
-    if (isValid) {
-      setIsAuthenticated(true)
-      setPasswordError(false)
-    } else {
-      setPasswordError(true)
-      setPassword('')
-    }
-  }
 
   const handleAddName = (e) => {
     e.preventDefault()
@@ -38,36 +23,6 @@ const NameManager = ({ initialNames, onSave, onCancel, onPasswordSubmit }) => {
     if (names.length > 0) {
       onSave(names)
     }
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="password-container">
-        <h2>🔒 Enter Password</h2>
-        <p className="password-hint">Enter the password to edit the names list</p>
-        <form onSubmit={handlePasswordSubmit}>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className={`password-input ${passwordError ? 'error' : ''}`}
-            autoFocus
-          />
-          {passwordError && (
-            <p className="error-message">❌ Incorrect password. Please try again.</p>
-          )}
-          <div className="button-group">
-            <button type="submit" className="submit-button">
-              Submit
-            </button>
-            <button type="button" onClick={onCancel} className="cancel-button">
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    )
   }
 
   return (
@@ -118,4 +73,3 @@ const NameManager = ({ initialNames, onSave, onCancel, onPasswordSubmit }) => {
 }
 
 export default NameManager
-
