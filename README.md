@@ -1,17 +1,6 @@
-# 🎡 Wheel Spinner - Next.js Edition
+# 🎡 Wheel Spinner - for Yahoo Finance Web Sync
 
 A retro terminal-style wheel spinner built with Next.js, perfect for random selection and giveaways!
-
-## 🚀 Features
-
-- 🎨 Retro terminal/hacker aesthetic with glowing green effects
-- 🎯 Smooth spinning animation with random selection
-- 🔒 Password-protected name editing
-- 💾 Local storage for persistent data
-- 📱 Fully responsive design
-- ⌨️ Keyboard shortcuts (Enter/Space to spin, Escape to close winner)
-- 🎪 Vertical text along wheel segments
-- 🌐 Ready for Vercel deployment with API routes
 
 ## 📦 Installation
 
@@ -25,15 +14,6 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-## 🔧 Configuration
-
-### Changing the Password
-
-Edit the password in `app/page.jsx`:
-
-```javascript
-const EDIT_PASSWORD = 'admin123' // Change this to your desired password
-```
 
 ### Customizing Default Names
 
@@ -60,10 +40,8 @@ const DEFAULT_NAMES = [
 The app includes API routes ready for future server-side functionality:
 
 - `GET /api/health` - Health check endpoint
-- `GET /api/names` - Fetch names (ready for database integration)
-- `PUT /api/names` - Update names (ready for database integration)
+- `GET /api/names` - Fetch names from the s.yimg s3 bucket
 
-Currently the app uses localStorage, but you can easily add database logic to these routes.
 
 ## 🚀 Deployment to Vercel
 
@@ -73,11 +51,16 @@ Currently the app uses localStorage, but you can easily add database logic to th
 4. Vercel will automatically detect Next.js and deploy!
 
 ### Environment Variables (Optional)
+NAMES_URL - the url containing name for the wheel
 
-If you add a database later, set your environment variables in Vercel:
 
-- `DATABASE_URL` - Your database connection string
-- `NEXT_PUBLIC_API_URL` - Your API URL (if different from default)
+## Updating names on the wheel
+- download https://s.yimg.com/cv/apiv2/default/20251202/web-sync-names.json
+- edit the json to add or remove names from the array
+- reupload the json to yo/uploadr (https://assemblr.corp.yahoo.com/uploadr) matching the directory https://s.yimg.com/cv/apiv2/default/20251202/web-sync-names.json
+- NOTE: when uploading confirm you are cacheing the files for 1 day or less. 
+
+
 
 ## 📁 Project Structure
 
@@ -123,14 +106,6 @@ const colors = [
   '#002600', '#003d00'
 ]
 ```
-
-## 🛠️ Tech Stack
-
-- **Framework:** Next.js 14 (App Router)
-- **React:** 18.3.1
-- **Deployment:** Vercel
-- **Styling:** CSS Modules
-- **Fonts:** Google Fonts (Courier Prime, Share Tech Mono)
 
 ## 📝 License
 
