@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import WheelSpinner from './components/WheelSpinner'
 import './components/WheelSpinner.css'
-import NameManager from './components/NameManager'
 import './page.css'
 
 const STORAGE_KEY = 'wheelSpinner_names'

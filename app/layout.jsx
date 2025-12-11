@@ -1,4 +1,6 @@
 import './globals.css'
+import FloatingGitHubButton from './components/FloatingGitHubButton'
+import './components/FloatingGitHubButton.css'
 
 export const metadata = {
   title: 'WHEEL_SPINNER.EXE',
@@ -8,7 +10,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <FloatingGitHubButton />
+      </body>
     </html>
   )
 }
