@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import WheelSpinner from './components/WheelSpinner'
 import './components/WheelSpinner.css'
 import './page.css'
@@ -53,6 +53,7 @@ export default function Home() {
   const [winner, setWinner] = useState(null);
   const [showWinner, setShowWinner] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
+  const audioRef = useRef(null);
   let interval = null;
 
   // Fetch names from S3 on mount
@@ -119,6 +120,15 @@ export default function Home() {
   }
 
   const handleSpinComplete = (selectedName) => {
+    // Play the Yahoo Yodel sound
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // Reset to start
+      audioRef.current.volume = 0.2; // Set volume to 20%
+      audioRef.current.play().catch(err => {
+        console.log('Audio playback failed:', err);
+      });
+    }
+    
     setShowWinner(true);
     setTimeout(() => scramblingText(selectedName), 300);
   };
@@ -193,6 +203,11 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* audio element for Yodel sound */}
+      <audio ref={audioRef} preload="auto">
+        <source src="/Yahoo_Yodel_3Second.wav" type="audio/wav" />
+      </audio>
     </div>
   )
 }
